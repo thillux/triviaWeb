@@ -13,23 +13,22 @@ var app = new Vue({
   methods: {
     previousPage: function (event) {
         var oldOffset = app.triviaOffset;
-        app.triviaOffset = Math.max(app.minTriviaID, app.triviaOffset - app.numTriviasPerPage);
-        if(app.maxTriviaID - app.triviaOffset < app.numTriviasPerPage) {
-            app.triviaOffset = Math.max(app.minTriviaID, app.maxTriviaID - app.numTriviasPerPage);
-        }
+        app.triviaOffset = Math.max(app.minTriviaID, app.triviaOffset - (app.numTriviasPerPage));
         if(app.triviaOffset != oldOffset) {
             fetchCurrentTrivia();
         }
     },
     nextPage: function (event) {
         var oldOffset = app.triviaOffset;
-        app.triviaOffset = Math.min(app.maxTriviaID, app.triviaOffset + app.numTriviasPerPage);
-        if(app.maxTriviaID - app.triviaOffset < app.numTriviasPerPage) {
-            app.triviaOffset = Math.max(app.minTriviaID, app.maxTriviaID - app.numTriviasPerPage);
-        }
+        app.triviaOffset = Math.min(app.maxTriviaID, app.triviaOffset + (app.numTriviasPerPage));
         if(app.triviaOffset != oldOffset) {
             fetchCurrentTrivia();
         }
+    }
+  },
+  computed: {
+    orderedTrivias: function () {
+      return _.orderBy(this.trivias, 'id', 'desc')
     }
   }
 })
@@ -37,27 +36,53 @@ var app = new Vue({
 function cbPushData() {
     respJson = JSON.parse(this.responseText);
 
-    // TODO: sanity checks
+    if(!respJson.hasOwnProperty('id') || typeof respJson.id != 'number') {
+      console.log("Invalid id property");
+      return;
+    }
+    if(!respJson.hasOwnProperty('fact') || typeof respJson.fact != 'string') {
+      console.log("Invalid fact property");
+      return;
+    }
+    if(!respJson.hasOwnProperty('category') || typeof respJson.category != 'string') {
+      console.log("Invalid category property");
+      return;
+    }
 
     app.trivias.push(respJson);
-    app.trivias.sort(function(a,b) {
-        return a.id < b.id;
-    });
 }
 
 function fetchCurrentTrivia() {
     app.trivias = []
-    for(var i = Math.min(app.maxTriviaID, app.triviaOffset + app.numTriviasPerPage); i >= app.triviaOffset; --i) {
+    for(var i = Math.min(app.maxTriviaID, app.triviaOffset + (app.numTriviasPerPage - 1)); i >= app.triviaOffset; --i) {
         fetchTrivia(i, cbPushData);
     }
 }
 
 function cbGetFirst() {
-  respJson = JSON.parse(this.responseText);
+  try {
+    respJson = JSON.parse(this.responseText);
+  } catch(error) {
+    console.log(error);
+    return;
+  }
+  if(!respJson.hasOwnProperty('id') || typeof respJson.id != 'number') {
+    console.log(respJson);
+    console.log("Invalid id property");
+    return;
+  }
+  if(!respJson.hasOwnProperty('fact') || typeof respJson.fact != 'string') {
+    console.log("Invalid fact property");
+    return;
+  }
+  if(!respJson.hasOwnProperty('category') || typeof respJson.category != 'string') {
+    console.log("Invalid category property");
+    return;
+  }
   app.maxTriviaID = respJson.id;
   app.minTriviaID = 1;
   if(respJson.id > app.numTriviasPerPage) {
-    app.triviaOffset = respJson.id - app.numTriviasPerPage;
+    app.triviaOffset = respJson.id - (app.numTriviasPerPage - 1);
   } else {
     app.triviaOffset = app.minTriviaID;
   }
