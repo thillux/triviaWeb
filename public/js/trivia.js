@@ -8,7 +8,8 @@ var app = new Vue({
     maxTriviaID: 0,
     minTriviaID: 0,
     numTriviasPerPage: 10,
-    trivias: []
+    trivias: [],
+    pendingRequests: []
   },
   methods: {
     previousPage: function (event) {
@@ -20,7 +21,7 @@ var app = new Vue({
     },
     nextPage: function (event) {
         var oldOffset = app.triviaOffset;
-        app.triviaOffset = Math.min(app.maxTriviaID, app.triviaOffset + (app.numTriviasPerPage));
+        app.triviaOffset = Math.max(app.minTriviaID, Math.min(app.maxTriviaID - app.numTriviasPerPage + 1, app.triviaOffset + (app.numTriviasPerPage)));
         if(app.triviaOffset != oldOffset) {
             fetchCurrentTrivia();
         }
@@ -50,10 +51,19 @@ function cbPushData() {
     }
 
     app.trivias.push(respJson);
+    
+    var reqToRemove = this;
+    _.remove(app.pendingRequests, (currentObject) => {
+        return currentObject === reqToRemove;
+    });
 }
 
 function fetchCurrentTrivia() {
-    app.trivias = []
+    app.trivias = [];
+    _.forEach(app.pendingRequests, function(value) {
+      value.abort();
+    });
+    app.pendingRequests = [];
     for(var i = Math.min(app.maxTriviaID, app.triviaOffset + (app.numTriviasPerPage - 1)); i >= app.triviaOffset; --i) {
         fetchTrivia(i, cbPushData);
     }
@@ -87,6 +97,11 @@ function cbGetFirst() {
     app.triviaOffset = app.minTriviaID;
   }
 
+  var reqToRemove = this;
+  _.remove(app.pendingRequests, (currentObject) => {
+      return currentObject === reqToRemove;
+  });
+
   fetchCurrentTrivia();
 }
 
@@ -94,6 +109,7 @@ function fetchTrivia(id, callback) {
     var oReq = new XMLHttpRequest();
     oReq.addEventListener("load", callback);
     oReq.open("GET", triviaApiUrl + "/" + id);
+    app.pendingRequests.push(oReq);
     oReq.send();
 }
 
