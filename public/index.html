@@ -16,48 +16,48 @@
 <body class="bg-light">
     <div class="container">
         <h2 class="mt-2 p-0">Thorstens tatsächlich tiptop tolle Trivia täglich telegrammiert</h2>
-        <h2 class="text-italic text-secondary">Top-Down Tabuliert</h2>
-    <div id="app">
-        <nav>
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous" v-on:click="nextPage">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-              <a class="page-link" href="#" aria-label="Next" v-on:click="previousPage">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-        
-        <div v-for="trivia in orderedTrivias" class="border border-primary rounded bg-light shadow mb-3">
-            <header class="bg-primary pl-2 pr-2 pt-1 pb-1 font-weight-bold text-light">
-                Trivia #{{ trivia.id }}
-            </header>
-            <div class="pl-2 pr-2 pt-1 pb-1">
-                {{ trivia.fact }}
+        <div id="app">
+            <nav>
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Previous" v-on:click="nextPage">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                  <a class="page-link" href="#" aria-label="Next" v-on:click="previousPage">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            
+            <div v-for="trivia in orderedTrivias" class="border border-primary rounded bg-light shadow mb-3">
+                <header class="bg-primary pl-2 pr-2 pt-1 pb-1 font-weight-bold text-light">
+                    Trivia #{{ trivia.id }}
+                </header>
+                <div class="pl-2 pr-2 pt-1 pb-1">
+                    {{ trivia.fact }}
+                </div>
             </div>
+            
+            <nav>
+              <ul class="pagination">
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Previous" v-on:click="nextPage">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                  <a class="page-link" href="#" aria-label="Next" v-on:click="previousPage">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
         </div>
-        
-        <nav>
-          <ul class="pagination">
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous" v-on:click="nextPage">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-              <a class="page-link" href="#" aria-label="Next" v-on:click="previousPage">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
